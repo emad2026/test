@@ -1,0 +1,44 @@
+{% load static %}  <!-- Add this line at the top -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Notification Test</title>
+
+    <script src="{% static 'js/notifications.js' %}"></script>  <!-- Use static tag correctly -->
+</head>
+<body>
+    <h1>Notifications</h1>
+    <div id="notifications"></div>
+    <script>
+        // Get the token from localStorage
+        const token = localStorage.getItem('access_token');
+        
+        // Create WebSocket connection with the token
+        const notificationSocket = new WebSocket(
+            `ws://${window.location.host}/ws/notifications/?token=${token}`
+        );
+
+        notificationSocket.onopen = function(e) {
+            console.log('WebSocket connection established');
+        };
+
+        notificationSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log('Received notification:', data);
+            // Add notification display logic here
+            alert(`New notification: ${data.message}`);
+        };
+
+        notificationSocket.onclose = function(e) {
+            console.error('WebSocket connection closed:', e);
+        };
+
+        notificationSocket.onerror = function(e) {
+            console.error('WebSocket error:', e);
+        };
+    </script>
+</body>
+</html>
