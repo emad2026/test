@@ -1,11 +1,10 @@
 import re
+from rest_framework.serializers import ValidationError
+import dns.resolver
 from rest_framework import serializers
-from rest_framework.serializers import ValidationError # type: ignore
-import dns.resolver # type: ignore
-import phonenumbers # type: ignore
+import phonenumbers
 
 def validate_password(password, password2):
-
     """
     Validates the password and raises ValidationError if invalid.
     """
@@ -30,11 +29,11 @@ def validate_password(password, password2):
 
 def validate_email(email):
     """
-        Validates the email format and dmain
-
+    Validates the email format and dmailn.
     """
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
         raise serializers.ValidationError("Invalid email format.")
+
     try:
         local_part, email_domain = email.split('@')
     except ValueError:
@@ -53,13 +52,16 @@ def validate_email(email):
         dns.resolver.resolve(email_domain, 'MX')
     except dns.resolver.NoAnswer:
         raise ValidationError(f"The domain {email_domain} does not have valid email servers.")
-    except dns.resolver.NXDOMAIN:
-        raise ValidationError(f"The domain {email_domain} does not exist.")
+    #except dns.resolver.NXDOMAIN:
+        #raise ValidationError(f"The domain {email_domain} does not exist.")
+
+
 def validate_first_last_name(first_name, last_name):
-    if not first_name or not last_name:
-        raise serializers.ValidationError(
-            {"first_name_last_name": "First name and last name are required."}
-        )
+    #if not first_name or not last_name:
+    #    raise serializers.ValidationError(
+    #        {"first_name_last_name": "First name and last name are required."}
+    #    )
+    
     if not first_name.isalpha() or not last_name.isalpha():
         raise serializers.ValidationError(
             {"first_name_last_name": "First name and last name must contain only alphabetic characters."}
@@ -68,6 +70,7 @@ def validate_first_last_name(first_name, last_name):
         raise serializers.ValidationError(
             {"first_name_last_name": "First name and last name must be at least 2 characters long."}
         )
+
 
 def validate_phone_number(value):
     """
@@ -87,6 +90,23 @@ def validate_phone_number(value):
         raise ValidationError("Invalid phone number.")
     #except phonenumbers.NumberParseException:
     #   raise ValidationError("Invalid phone number format.")
-    
 
+
+def validate_full_name(value):
+        
+        full_name = value.strip()
+        if not full_name:
+            raise serializers.ValidationError({"full_name": "Full name is required."})
+        
+        name_parts = full_name.split()
+        if len(name_parts) < 2:
+            raise serializers.ValidationError(
+                {"full_name": "Please provide both first name and last name."}
+            )
+
+        # Assign first_name and last_name to the data
+        return {
+        'first_name': name_parts[0],
+        'last_name': ' '.join(name_parts[1:]),
+    }
 

@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "channels",
     "Notifications",
+    "captain",
+    "client",
 ]
 
 MIDDLEWARE = [

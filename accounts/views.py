@@ -13,19 +13,20 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 import jwt
-from django.conf import settings # type: ignore
+from django.conf import settings
 SECRET_KEY = settings.SECRET_KEY
 from accounts.validations import validate_password
-from rest_framework import permissions # type: ignore
-from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
-from django.contrib.auth import authenticate # type: ignore
-from rest_framework_simplejwt.views import TokenObtainPairView # type: ignore
-from rest_framework_simplejwt.exceptions import TokenError # type: ignore
+from rest_framework import permissions
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.exceptions import TokenError
+from django.utils import timezone
 from datetime import timedelta
 #from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated # type: ignore
+from rest_framework.permissions import IsAuthenticated
 #from accounts.services.user_service import create_user
-from django.contrib.auth.hashers import check_password # type: ignore
+from django.contrib.auth.hashers import check_password
 #User = get_user_model()
 #logger = logging.getLogger(__name__)
 
@@ -420,22 +421,22 @@ class CaptainChangePasswordView(APIView):
             if not refresh_token:
                 raise ValidationError({"refresh_token": "This field is required."})
             payload = jwt.decode(refresh_token, SECRET_KEY, algorithms=["HS256"])
-            Captain = payload.get('Captain_id')
+            captain = payload.get('captain_id')
 
             # Fetch the Captain
-            Captain = Captain.objects.get(id=Captain)
+            captain = Captain.objects.get(id=captain)
 
             # Validate old password
             old_password = request.data.get('old_password')
-            if not old_password or not check_password(old_password, Captain.password):
+            if not old_password or not check_password(old_password, captain.password):
                 raise ValidationError({"old_password": "Old password is incorrect."})
             # Validate new passwords
             new_password = request.data.get('new_password')
             confirm_password = request.data.get('confirm_password')
             validate_password(new_password,confirm_password)
             # Change password
-            Captain.set_password(new_password)
-            Captain.save()
+            captain.set_password(new_password)
+            captain.save()
             return Response({"message": "Password changed successfully."}, status=200)
         except jwt.ExpiredSignatureError:
             pass
@@ -451,8 +452,6 @@ class CaptainChangePasswordView(APIView):
                     return Response(e.detail, status=400)
         
 class clientChangePasswordView(APIView):
-
-
     def post(self, request):
         try:
             # Retrieve and decode the refresh token
@@ -461,25 +460,31 @@ class clientChangePasswordView(APIView):
                 raise ValidationError({"refresh_token": "This field is required."})
             payload = jwt.decode(refresh_token, SECRET_KEY, algorithms=["HS256"])
             client_id = payload.get('client_id')
+
             # Fetch the client
-            client = client.objects.get(id=client_id)
+            client = Client.objects.get(id=client_id)
+
             # Validate old password
             old_password = request.data.get('old_password')
             if not old_password or not check_password(old_password, client.password):
                 raise ValidationError({"old_password": "Old password is incorrect."})
+
             # Validate new passwords
             new_password = request.data.get('new_password')
             confirm_password = request.data.get('confirm_password')
-            validate_password(new_password,confirm_password)
+            validate_password(new_password, confirm_password)
+
             # Change password
             client.set_password(new_password)
             client.save()
+
             return Response({"message": "Password changed successfully."}, status=200)
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Token has expired')
         except jwt.InvalidTokenError:
             raise AuthenticationFailed('Invalid token')
-        except client.DoesNotExist:
-            raise AuthenticationFailed('client not found')
+        except Client.DoesNotExist:
+            raise AuthenticationFailed('Client not found')
         except ValidationError as e:
             return Response(e.detail, status=400)
+        
