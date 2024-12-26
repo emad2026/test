@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "Notifications",
     "captain",
     "client",
+    "profile_app",
 ]
 
 MIDDLEWARE = [

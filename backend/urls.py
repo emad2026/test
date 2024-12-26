@@ -22,6 +22,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include("api.urls")),
     path("api/Notifications/", include("Notifications.urls")),
-    path('api/captain/', include('captain.urls')),
-    path('api/client/', include('client.urls')),
+    path('api/v1/captain/', include('captain.urls')),
+    path('api/v1/client/', include('client.urls')),
+    path('api/v1/', include('profile_app.urls')),  # تأكد من الربط مع ملف urls الخاص بالتطبيق
+
 ]

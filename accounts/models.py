@@ -91,7 +91,7 @@ class OneTimePassword(models.Model):
     client = models.ForeignKey(Client, null=True, blank=True, on_delete=models.CASCADE)
 
     def is_expired(self):
-        expiry_time = self.created_at + timedelta(minutes=10)
+        expiry_time = self.created_at + timedelta(minutes=4)
         return timezone.now() > expiry_time
 
     def __str__(self):
