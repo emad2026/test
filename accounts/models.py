@@ -22,7 +22,7 @@ class Captain(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ["first_name", "last_name"]
     phone_number = PhoneNumberField(null=True, blank=True)
-    
+
 
     def __str__(self):
         return f"{self.email}"
@@ -53,7 +53,7 @@ class Client(AbstractUser):
     username = None  # Remove username field
     is_verified = models.BooleanField(default=False)  # Email verification status
     phone_number = PhoneNumberField(null=True, blank=True)  # Optional phone number field
-    
+
     # Configure the username field for authentication
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']

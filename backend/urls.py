@@ -24,6 +24,6 @@ urlpatterns = [
     path("api/Notifications/", include("Notifications.urls")),
     path('api/v1/captain/', include('captain.urls')),
     path('api/v1/client/', include('client.urls')),
-    path('api/v1/', include('profile_app.urls')),  # تأكد من الربط مع ملف urls الخاص بالتطبيق
+    path('api/v1/profile/', include('profile_app.urls')),  # ربط روابط التطبيق profile_app
 
 ]

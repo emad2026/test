@@ -1,6 +1,8 @@
+from cProfile import Profile
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from accounts.models import Client, Captain
+from profile_app.signals import create_captain_profile, create_client_profile
 
 class CaptainManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password=None, **extra_fields):
@@ -27,7 +29,15 @@ class CaptainManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+    
+    
+    def create_captain_profile(sender, instance, created, **kwargs):
+         if created:
+            Profile.objects.create(captain=instance)  # استبدال user بـ captain
+            post_save.connect(create_captain_profile, sender=Captain)  # type: ignore # تعديل الـ sender ليكون Captain
 
+
+ 
     def create_superuser(self, email, password=None, **extra_fields):
         """
         Create and return a superuser.
@@ -69,6 +79,12 @@ class ClientManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+    
+    def create_client_profile(sender, instance, created, **kwargs):
+       if created:
+        Profile.objects.create(client=instance)  # استبدال user بـ client
+        post_save.connect(create_client_profile, sender=Client)  # type: ignore # تعديل الـ sender ليكون Client
+
 
     def create_superuser(self, email, password=None, **extra_fields):
         """

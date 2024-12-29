@@ -7,18 +7,18 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="profile_app_captain",  # تخصيص اسم فريد للعلاقة العكسية
+        related_name="profile_app_captain",  # علاقة عكسية للكابتن
     )
     client = models.OneToOneField(
         Client,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="profile_app_client_profile"  # اسم العلاقة العكسية للكلاينت
+        related_name="profile_app_client",  # علاقة عكسية للكلاينت
     )
-    country_code = models.CharField(max_length=5, default='+20')  # كود الدولة
+    country_code = models.CharField(max_length=5, default='+20')
 
-def __str__(self):
+    def __str__(self):
         if self.captain:
             return f"Captain Profile: {self.captain.email}"
         elif self.client:
