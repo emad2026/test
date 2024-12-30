@@ -1,14 +1,10 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from accounts.models import Captain, Client
-from .models import Profile
+from .models import Client, ClientProfile
+from django.apps import apps
 
-@receiver(post_save, sender=Captain)
-def create_captain_profile(sender, instance, created, **kwargs):
-    if created and not hasattr(instance, 'profile_app_captain'):  # تحقق من وجود البروفايل
-        Profile.objects.create(captain=instance)
 
 @receiver(post_save, sender=Client)
 def create_client_profile(sender, instance, created, **kwargs):
-    if created and not hasattr(instance, 'profile_app_client'):
-        Profile.objects.create(client=instance)
+    if created:
+        ClientProfile.objects.get_or_create(client=instance)

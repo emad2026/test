@@ -1,12 +1,7 @@
 from rest_framework import serializers
-from .models import Profile
-
-class CaptainProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = ['country_code']
+from .models import ClientProfile
 
 class ClientProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
-        fields = ['country_code']
+        model = ClientProfile
+        fields = ['id', '<', 'country_code']

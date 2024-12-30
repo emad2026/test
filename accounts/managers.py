@@ -2,7 +2,7 @@ from cProfile import Profile
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from accounts.models import Client, Captain
-from profile_app.signals import create_captain_profile, create_client_profile
+from profile_app.signals import  create_client_profile
 
 class CaptainManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password=None, **extra_fields):

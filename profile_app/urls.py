@@ -1,7 +1,6 @@
 from django.urls import path
-from .views import CaptainProfileView, ClientProfileView
+from .views import ClientProfileAPIView
 
 urlpatterns = [
-    path('captain/profile/', CaptainProfileView.as_view(), name='captain-profile'),
-    path('client/profile/', ClientProfileView.as_view(), name='client-profile'),
+    path('client-profiles/', ClientProfileAPIView.as_view(), name='client-profiles'),
 ]

@@ -20,12 +20,28 @@ from phonenumber_field.serializerfields import PhoneNumberField # type: ignore
 #Registration
 class CaptainRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
-    phone_number = PhoneNumberField(allow_null=True,allow_blank=True)
+    #phone_number = PhoneNumberField(allow_null=True,allow_blank=True)
 
     class Meta:
         model = Captain
-        fields = ['email', 'first_name', 'last_name', 'password', 'password2','phone_number' ]
-
+        fields = [
+            "email",
+            "first_name",
+            "last_name",
+            "password",
+            "password2",
+            "phone_number",
+            "full_name",
+        ]
+        extra_kwargs = {
+            "first_name": {
+                "read_only": True
+            },  # These are auto-generated from full_name
+            "last_name": {
+                "read_only": True,
+            },  # These are auto-generated from full_name
+        }
+        
     def validate(self, data):
         validate_password(data['password'], data['password2'])
         validate_first_last_name(data['first_name'], data['last_name'])
@@ -47,7 +63,23 @@ class ClientRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
-        fields = ['email', 'first_name', 'last_name', 'password', 'password2','phone_number']
+        fields = [
+            "email",
+            "first_name",
+            "last_name",
+            "password",
+            "password2",
+            "phone_number",
+            "full_name",
+        ]
+        extra_kwargs = {
+            "first_name": {
+                "read_only": True
+            },  # These are auto-generated from full_name
+            "last_name": {
+                "read_only": True,
+            },  # These are auto-generated from full_name
+        }
  
     def validate(self, data):
         validate_email(data['email'])

@@ -12,16 +12,25 @@ from django.contrib.auth import get_user_model # type: ignore
 from django.db import models # type: ignore
 from django.contrib.auth.models import User # type: ignore
 
-
+from django.core.validators import RegexValidator
 class Captain(AbstractUser):
     # Override the default email validation to make it unique
     email = models.EmailField(unique=True)
-    
-    username= None
+    phone_number = models.CharField(
+        max_length=12,
+        validators=[
+            RegexValidator( # type: ignore
+                regex="^01[0|1|2|5][0-9]{8}$",
+                message="Phone must be start 010, 011, 012, 015 and all number contains 11 digits",
+            )
+        ],
+        # blank=True,
+    )
+    username = None
     is_verified=models.BooleanField(default=False)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ["first_name", "last_name"]
-    phone_number = PhoneNumberField(null=True, blank=True)
+   #phone_number = PhoneNumberField(null=True, blank=True)
 
 
     def __str__(self):
@@ -52,8 +61,17 @@ class Client(AbstractUser):
     email = models.EmailField(unique=True)
     username = None  # Remove username field
     is_verified = models.BooleanField(default=False)  # Email verification status
-    phone_number = PhoneNumberField(null=True, blank=True)  # Optional phone number field
-
+    #phone_number = PhoneNumberField(null=True, blank=True)  # Optional phone number field
+    phone_number = models.CharField(
+        max_length=12,
+        validators=[
+            RegexValidator( # type: ignore
+                regex="^01[0|1|2|5][0-9]{8}$",
+                message="Phone must be start 010, 011, 012, 015 and all number contains 11 digits",
+            )
+        ],
+        # blank=True,
+    )
     # Configure the username field for authentication
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
