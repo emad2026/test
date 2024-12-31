@@ -56,6 +56,7 @@ class Captain(AbstractUser):
 
 
 
+
 class Client(AbstractUser):
     # Email field override to make it unique
     email = models.EmailField(unique=True)
@@ -77,7 +78,7 @@ class Client(AbstractUser):
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     # String representation
-    def __str__(self):
+    def _str_(self):
         return f"{self.email} - Client"
     
     class Meta:
@@ -95,7 +96,6 @@ class Client(AbstractUser):
         related_name="client_permissions",  # Ensure unique related_name
         blank=True
     )
-
 
 
 
@@ -143,6 +143,40 @@ class ClientProfile(models.Model):
     def __str__(self):
         return f"Passenger Profile for {self.user.email}"
 '''
+
+class ClientProfile(models.Model):
+
+    client = models.OneToOneField(Client, on_delete=models.CASCADE, related_name='client_profile')
+    country_code = models.CharField(max_length=10, blank=True, null=True)
+
+    def _str_(self):
+        return f"Profile of {self.client.first_name} {self.client.last_name}"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 from .managers import CaptainManager, ClientManager
 

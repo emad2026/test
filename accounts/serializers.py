@@ -16,7 +16,7 @@ from accounts.validations import  validate_email, validate_first_last_name, vali
 from rest_framework.response import Response # type: ignore
 from rest_framework import status # type: ignore
 from phonenumber_field.serializerfields import PhoneNumberField # type: ignore
-
+from .models import Client, ClientProfile
 #Registration
 class CaptainRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
@@ -31,7 +31,6 @@ class CaptainRegistrationSerializer(serializers.ModelSerializer):
             "password",
             "password2",
             "phone_number",
-            "full_name",
         ]
         extra_kwargs = {
             "first_name": {
@@ -70,7 +69,6 @@ class ClientRegistrationSerializer(serializers.ModelSerializer):
             "password",
             "password2",
             "phone_number",
-            "full_name",
         ]
         extra_kwargs = {
             "first_name": {
@@ -183,7 +181,7 @@ class CaptainResetPasswordSerializer(serializers.Serializer):
         OneTimePassword.objects.filter(captain=captain).delete()
 
         return captain
-
+    
 class ClientResetPasswordSerializer(serializers.Serializer):
     otp = serializers.CharField(max_length=6)
     password = serializers.CharField(write_only=True)
@@ -220,6 +218,46 @@ class ClientResetPasswordSerializer(serializers.Serializer):
         # Delete the used OTP
         OneTimePassword.objects.filter(client=client).delete()
 
+        return client
+
+class ClientRegistrationSerializer(serializers.ModelSerializer):
+    password2 = serializers.CharField(write_only=True)
+    phone_number = PhoneNumberField(allow_null=True, allow_blank=True)
+
+    class Meta:
+        model = Client
+        fields = [
+            "email",
+            "first_name",
+            "last_name",
+            "password",
+            "password2",
+            "phone_number",
+        ]
+        extra_kwargs = {
+            "first_name": {"required": True},
+            "last_name": {"required": True},
+        }
+
+    def validate(self, data):
+        validate_email(data['email'])
+        validate_password(data['password'], data['password2'])
+        
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
+        
+        if not first_name or not last_name:
+            raise serializers.ValidationError("Both first_name and last_name are required.")
+        
+        validate_first_last_name(first_name, last_name)
+        validate_phone_number(data.get('phone_number', None))
+        return data
+
+    def create(self, validated_data):
+        password = validated_data.pop('password2')
+        client = Client(**validated_data)
+        client.set_password(password)
+        client.save()
         return client
 
 #Login and Generate JWT Tokens
@@ -271,6 +309,23 @@ class ClientLoginSerializer(serializers.Serializer):
             raise AuthenticationFailed("Client account is deactivated.")
 
         return client 
+    
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = ['email', 'first_name', 'last_name', 'phone_number', 'is_verified']
+
+class ClientProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClientProfile
+        fields = ['country_code']
+
+
+
+
+
 
 '''
 from django.contrib.auth import get_user_model
@@ -307,6 +362,10 @@ class CaptainLoginSerializer(serializers.Serializer):
             return generate_tokens_for_user(captain)
 
         raise serializers.ValidationError("Invalid credentials for Captain.")
+
+
+
+        
 '''        
 
 

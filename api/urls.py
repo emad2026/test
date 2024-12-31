@@ -6,6 +6,7 @@ from accounts.views import (
     CaptainResendOTPView, CaptainResetPasswordView,CaptainChangePasswordView, VerifyEmailView
 )
 from rest_framework_simplejwt.views import TokenRefreshView # type: ignore
+from  accounts.views import ClientUpdateView, ClientProfileUpdateView
 
 urlpatterns = [
     # Resend OTP
@@ -33,9 +34,7 @@ urlpatterns = [
     path('register/captain/', CaptainRegisterView.as_view(), name='register-captain'),
     path('register/client/', ClientRegisterView.as_view(), name='register-client'),
     path('verify-email/', VerifyEmailView.as_view(), name='verify-email'),
+    #profile 
+    path('api/client/update/', ClientUpdateView.as_view(), name='client-update'),
+    path('api/client/profile/update/', ClientProfileUpdateView.as_view(), name='client-profile-update'),
 ]
-
-
-
-
-

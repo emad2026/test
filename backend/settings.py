@@ -51,8 +51,8 @@ INSTALLED_APPS = [
     "Notifications",
     "captain",
     "client",
-    "profile_app",
-]
+    
+    ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

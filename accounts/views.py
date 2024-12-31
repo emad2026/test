@@ -29,7 +29,10 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.hashers import check_password
 #User = get_user_model()
 #logger = logging.getLogger(__name__)
-
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .models import Client, ClientProfile
+from .serializers import ClientSerializer, ClientProfileSerializer
 
 
 
@@ -488,3 +491,20 @@ class clientChangePasswordView(APIView):
         except ValidationError as e:
             return Response(e.detail, status=400)
         
+
+
+
+
+class ClientUpdateView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClientSerializer
+
+    def get_object(self):
+        return self.request.user
+
+class ClientProfileUpdateView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClientProfileSerializer
+
+    def get_object(self):
+        return self.request.user.client_profile
