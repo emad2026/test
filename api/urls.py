@@ -35,6 +35,7 @@ urlpatterns = [
     path('register/client/', ClientRegisterView.as_view(), name='register-client'),
     path('verify-email/', VerifyEmailView.as_view(), name='verify-email'),
     #profile 
-    path('api/client/update/', ClientUpdateView.as_view(), name='client-update'),
-    path('api/client/profile/update/', ClientProfileUpdateView.as_view(), name='client-profile-update'),
+    path('client/update/', ClientUpdateView.as_view(), name='client-update'),
+    path('client/profile/update/', ClientProfileUpdateView.as_view(), name='client-profile-update'),
+
 ]
